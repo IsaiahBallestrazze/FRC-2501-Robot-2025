@@ -14,9 +14,14 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.NEOPixles;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -32,6 +37,14 @@ import swervelib.math.SwerveMath;
  */
 public class RobotContainer {
 
+  private final NEOPixles s_neo = new NEOPixles();
+  private final Climber s_climber = new Climber();
+  private final Elevator s_Elevator = new Elevator();
+  private final Intake s_Intake = new Intake();
+
+
+
+  
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
@@ -76,18 +89,54 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    // Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
-    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    // drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-    driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    driverXbox.b().whileTrue(
-        drivebase.driveToPose(
-            new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    driverXbox.start().whileTrue(Commands.none());
-    driverXbox.back().whileTrue(Commands.none());
-    driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    driverXbox.rightBumper().onTrue(Commands.none());
+    // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    // driverXbox.b().whileTrue(
+    //     drivebase.driveToPose(
+    //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+    // driverXbox.start().whileTrue(Commands.none());
+    // driverXbox.back().whileTrue(Commands.none());
+    // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    // driverXbox.rightBumper().onTrue(Commands.none());
+
+    driverXbox.x().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(.3))); // resets relavtive
+    driverXbox.x().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
+
+    driverXbox.y().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.3))); // resets relavtive
+    driverXbox.y().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
+
+    driverXbox.a().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(.5,-1000))); // resets relavtive
+    driverXbox.a().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-1000))); // resets relavtive
+
+    driverXbox.b().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.5,-3000))); // resets relavtive
+    driverXbox.b().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-3000))); // resets relavtive
+
+    driverXbox.rightBumper().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
+    driverXbox.rightBumper().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
+
+    //D-Pad
+driverXbox.povUp().whileTrue(new RunCommand(() -> s_Intake.pivotUp()));
+driverXbox.povUp().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+
+driverXbox.povDown().whileTrue(new RunCommand(() -> s_Intake.pivotDown()));
+driverXbox.povDown().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+
+driverXbox.povLeft().whileTrue(new RunCommand(() -> s_climber.ClimberMotorUp()));
+driverXbox.povLeft().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
+
+driverXbox.povRight().whileTrue(new RunCommand(() -> s_climber.ClimberMotorDown()));
+driverXbox.povRight().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
+
+driverXbox.leftTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorUp(.2)));
+driverXbox.leftTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+
+driverXbox.rightTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorDown(-.2)));
+driverXbox.rightTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
+
+
   }
 
   /**

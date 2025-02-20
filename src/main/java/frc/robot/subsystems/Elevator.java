@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -16,8 +17,8 @@ public class Elevator extends SubsystemBase {
 
       RelativeEncoder elevatorEncoder = ElevatorMotor.getEncoder();
 
-      double elevatorMin= -200;
-      double elevatorMax= 200;
+      double elevatorMin= 0;
+      double elevatorMax= -110;
 
       PIDController ElevatorPID = new PIDController(0, 0, 0);
 
@@ -27,16 +28,36 @@ public class Elevator extends SubsystemBase {
 
   public void ElevatorMotorUp(double speed){
     double elavatorposition = elevatorEncoder.getPosition();
-    if(elevatorMax <= elavatorposition) ElevatorMotor.set(speed);
+    SmartDashboard.putNumber("elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
+    if(elevatorMax <= elavatorposition){
+      SmartDashboard.putBoolean("Elevator Safety", true); // gets magnitude of left joystick
+      ElevatorMotor.set(speed);
+    } else{
+      SmartDashboard.putBoolean("Elevator Safety", false); // gets magnitude of left joystick
+    }
   }
   public void ElevatorMotorDown(double speed){
+    SmartDashboard.putNumber("elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
     double elavatorposition = elevatorEncoder.getPosition();
-    if(elevatorMax <= elavatorposition) ElevatorMotor.set(speed);
+    if(elevatorMin >= elavatorposition){
+      ElevatorMotor.set(speed);
+      SmartDashboard.putBoolean("Elevator Safety", true); // gets magnitude of left joystick
+
+    } else{
+      SmartDashboard.putBoolean("Elevator Safety", false); // gets magnitude of left joystick
+
+    }
   }
 
   public void ElevatorMotorStop(){
 ElevatorMotor.set(0); 
 }
+
+public void ElevatorEncoderTest(){
+  ElevatorMotor.set(0); 
+      SmartDashboard.putNumber("Elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
+    SmartDashboard.putNumber("Elevator Speed", elevatorEncoder.getVelocity());
+  }
 
 public void ElevationSet(double elevationHeight){
   Double ElevationSpeed = ElevatorPID.calculate(elevatorEncoder.getPosition(), elevationHeight);

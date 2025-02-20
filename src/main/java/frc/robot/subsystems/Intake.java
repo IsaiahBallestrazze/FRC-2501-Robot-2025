@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -22,9 +23,12 @@ public class Intake extends SubsystemBase {
      RelativeEncoder encodertilt = Coraltilt.getEncoder();
      RelativeEncoder encoderWheel = CoralWheel.getEncoder();
 
-  PIDController CoralPID = new PIDController(0, 0, 0);
+  PIDController CoralPID = new PIDController(0.00125, 0, 0.0);
 
-  double SetpointAngle = 200;
+  double CoralAngle1 = -1000;
+  double minPivot = -5500;
+  double maxPivot = -700;
+
 
   public Intake() {}
 
@@ -33,20 +37,47 @@ public class Intake extends SubsystemBase {
 
   public void AlgaeIntake(double speed){
     IntakeWheelLeft.set(speed);
-    IntakeWheelRight.set(speed);
+    IntakeWheelRight.set(-speed);
   }
 
   public void CoralIntake(double intakeSpeed, double IntakeAngle){
 
     Double tiltSpeed = CoralPID.calculate(encodertilt.getPosition(), IntakeAngle);
 
+    encodertilt = Coraltilt.getEncoder();
+  SmartDashboard.putNumber("relative Coral", encodertilt.getPosition()); // gets magnitude of left joystick
+  SmartDashboard.putNumber("Coral Wheel", encoderWheel.getVelocity()); // gets magnitude of left joystick
+
+    if(encodertilt.getPosition() < maxPivot && encodertilt.getPosition() > minPivot){
     Coraltilt.set(tiltSpeed);
+    SmartDashboard.putNumber("Pivot Speed", tiltSpeed); // gets magnitude of left joystick
+    SmartDashboard.putBoolean("Encoder Pivot", true); // gets magnitude of left joystick
+
+    } else{
+      SmartDashboard.putBoolean("Encoder Pivot", false); // gets magnitude of left joystick
+      Coraltilt.set(0);
+
+    }
+
     CoralWheel.set(intakeSpeed);
 
 
   }
 
+public void pivotUp(){
+  Coraltilt.set(.1);
 
+}
+
+public void pivotDown(){
+  Coraltilt.set(-.1);
+
+}
+
+public void pivotStop(){
+  Coraltilt.set(0);
+
+}
 
   @Override
   public void periodic() {

@@ -8,28 +8,51 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
     private final SparkMax ClimberMotor = new SparkMax(13, MotorType.kBrushless);
      RelativeEncoder ClimberEncoder = ClimberMotor.getEncoder();
-    double maxClimb = 200;
-    double minClimb = -200;
+    double maxClimb = 287;
+    double minClimb = 0;
 
   public Climber() {}
 
   public void ClimberMotorUp(){
     double climberangle = ClimberEncoder.getPosition();
-    if(maxClimb >= climberangle) ClimberMotor.set(.5);
+    if(maxClimb >= climberangle) ClimberMotor.set(1);
 
+  SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
+  SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
   }
   public void ClimberMotorDown(){
+    SmartDashboard.putBoolean("Climber Down", true); // gets magnitude of left joystick
     double climberangle = ClimberEncoder.getPosition();
-    if(minClimb <= climberangle) ClimberMotor.set(-.5);
+    if(minClimb <= climberangle) ClimberMotor.set(-1);
+    SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
+    SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
   }
   public void ClimberMotorStop(){
     ClimberMotor.set(0);
+    SmartDashboard.putBoolean("Climber Down", false); // gets magnitude of left joystick
+    SmartDashboard.putBoolean("Climber Up", false); // gets magnitude of left joystick
+
+  }
+
+  public void climberUp(){
+    SmartDashboard.putBoolean("Climber Up", true); // gets magnitude of left joystick
+    ClimberMotor.set(.1);
+    SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
+    SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
+
+  }
+  public void climberDown(){
+    ClimberMotor.set(-.1);
+
+    SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
+    SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
   }
 
   @Override
