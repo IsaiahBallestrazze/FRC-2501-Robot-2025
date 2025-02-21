@@ -47,6 +47,7 @@ public class RobotContainer {
   
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandXboxController controlXbox = new CommandXboxController(1);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve/neo"));
@@ -89,52 +90,52 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    // Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
-    // drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-    // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    // driverXbox.b().whileTrue(
-    //     drivebase.driveToPose(
-    //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    // driverXbox.start().whileTrue(Commands.none());
-    // driverXbox.back().whileTrue(Commands.none());
-    // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    // driverXbox.rightBumper().onTrue(Commands.none());
+    driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    driverXbox.b().whileTrue(
+        drivebase.driveToPose(
+            new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+    driverXbox.start().whileTrue(Commands.none());
+    driverXbox.back().whileTrue(Commands.none());
+    driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    driverXbox.rightBumper().onTrue(Commands.none());
 
-    driverXbox.x().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(.3))); // resets relavtive
-    driverXbox.x().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
+    controlXbox.x().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(.3))); // resets relavtive
+    controlXbox.x().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
 
-    driverXbox.y().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.3))); // resets relavtive
-    driverXbox.y().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
+    controlXbox.y().whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.3))); // resets relavtive
+    controlXbox.y().whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
 
-    driverXbox.a().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(.5,-1000))); // resets relavtive
-    driverXbox.a().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-1000))); // resets relavtive
+    controlXbox.a().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(.5,-1000))); // resets relavtive
+    controlXbox.a().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-1000))); // resets relavtive
 
-    driverXbox.b().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.5,-3000))); // resets relavtive
-    driverXbox.b().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-3000))); // resets relavtive
+    controlXbox.b().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.5,-3000))); // resets relavtive
+    controlXbox.b().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-3000))); // resets relavtive
 
-    driverXbox.rightBumper().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
-    driverXbox.rightBumper().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
+    controlXbox.rightBumper().whileTrue(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
+    controlXbox.rightBumper().whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0,-5000))); // resets relavtive
 
-    //D-Pad
-driverXbox.povUp().whileTrue(new RunCommand(() -> s_Intake.pivotUp()));
-driverXbox.povUp().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+    // //D-Pad
+    controlXbox.povUp().whileTrue(new RunCommand(() -> s_Intake.pivotUp()));
+    controlXbox.povUp().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
 
-driverXbox.povDown().whileTrue(new RunCommand(() -> s_Intake.pivotDown()));
-driverXbox.povDown().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+    controlXbox.povDown().whileTrue(new RunCommand(() -> s_Intake.pivotDown()));
+    controlXbox.povDown().whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
 
-driverXbox.povLeft().whileTrue(new RunCommand(() -> s_climber.ClimberMotorUp()));
-driverXbox.povLeft().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
+    controlXbox.povLeft().whileTrue(new RunCommand(() -> s_climber.ClimberMotorUp()));
+    controlXbox.povLeft().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
 
-driverXbox.povRight().whileTrue(new RunCommand(() -> s_climber.ClimberMotorDown()));
-driverXbox.povRight().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
+    controlXbox.povRight().whileTrue(new RunCommand(() -> s_climber.ClimberMotorDown()));
+    controlXbox.povRight().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
 
-driverXbox.leftTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorUp(.2)));
-driverXbox.leftTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+    controlXbox.leftTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorUp(.2)));
+    controlXbox.leftTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
 
-driverXbox.rightTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorDown(-.2)));
-driverXbox.rightTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
+    controlXbox.rightTrigger().whileTrue(new RunCommand(() -> s_Elevator.ElevatorMotorDown(-.2)));
+    controlXbox.rightTrigger().whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
 
   }
