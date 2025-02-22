@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
       RelativeEncoder elevatorEncoder = ElevatorMotor.getEncoder();
 
       double elevatorMin= 0;
-      double elevatorMax= -110;
+      double elevatorMax= 110;
 
       PIDController ElevatorPID = new PIDController(0, 0, 0);
 
@@ -27,9 +27,9 @@ public class Elevator extends SubsystemBase {
   public Elevator() {}
 
   public void ElevatorMotorUp(double speed){
-    double elavatorposition = elevatorEncoder.getPosition();
+    double elavatorposition = Math.abs(elevatorEncoder.getPosition());
     SmartDashboard.putNumber("elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
-    if(elevatorMax <= elavatorposition){
+    if(elevatorMax >= elavatorposition){
       SmartDashboard.putBoolean("Elevator Safety", true); // gets magnitude of left joystick
       ElevatorMotor.set(speed);
     } else{
@@ -38,8 +38,8 @@ public class Elevator extends SubsystemBase {
   }
   public void ElevatorMotorDown(double speed){
     SmartDashboard.putNumber("elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
-    double elavatorposition = elevatorEncoder.getPosition();
-    if(elevatorMin >= elavatorposition){
+    double elavatorposition = Math.abs(elevatorEncoder.getPosition());
+    if(elevatorMin <= elavatorposition){
       ElevatorMotor.set(speed);
       SmartDashboard.putBoolean("Elevator Safety", true); // gets magnitude of left joystick
 
@@ -59,10 +59,22 @@ public void ElevatorEncoderTest(){
     SmartDashboard.putNumber("Elevator Speed", elevatorEncoder.getVelocity());
   }
 
+
+
+  
 public void ElevationSet(double elevationHeight){
   Double ElevationSpeed = ElevatorPID.calculate(elevatorEncoder.getPosition(), elevationHeight);
   ElevatorMotor.set(ElevationSpeed);
+
+  SmartDashboard.putNumber("Elevator Position", elevatorEncoder.getPosition()); // gets magnitude of left joystick
+  SmartDashboard.putNumber("Elevator Speed", elevatorEncoder.getVelocity());
 }
+
+//PID SetPositions
+
+
+
+
 
 
 

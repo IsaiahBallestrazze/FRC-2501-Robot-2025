@@ -25,9 +25,8 @@ public class Intake extends SubsystemBase {
 
   PIDController CoralPID = new PIDController(0.00125, 0, 0.0);
 
-  double CoralAngle1 = -1000;
-  double minPivot = -5500;
-  double maxPivot = -700;
+  double minPivot = -100;
+  double maxPivot = -4000;
 
 
   public Intake() {}
@@ -40,42 +39,47 @@ public class Intake extends SubsystemBase {
     IntakeWheelRight.set(-speed);
   }
 
-  public void CoralIntake(double intakeSpeed, double IntakeAngle){
-
-    Double tiltSpeed = CoralPID.calculate(encodertilt.getPosition(), IntakeAngle);
+  public void CoralTilt(double IntakeAngle){
 
     encodertilt = Coraltilt.getEncoder();
-  SmartDashboard.putNumber("relative Coral", encodertilt.getPosition()); // gets magnitude of left joystick
-  SmartDashboard.putNumber("Coral Wheel", encoderWheel.getVelocity()); // gets magnitude of left joystick
+    Double tiltSpeed = CoralPID.calculate(encodertilt.getPosition(), IntakeAngle);
+    
+    SmartDashboard.putNumber("relative Coral", encodertilt.getPosition()); // gets magnitude of left joystick
+    SmartDashboard.putNumber("Coral Wheel", encoderWheel.getVelocity()); // gets magnitude of left joystick
 
-    if(encodertilt.getPosition() < maxPivot && encodertilt.getPosition() > minPivot){
+
+    if(encodertilt.getPosition() <= maxPivot || encodertilt.getPosition() >= minPivot){
     Coraltilt.set(tiltSpeed);
     SmartDashboard.putNumber("Pivot Speed", tiltSpeed); // gets magnitude of left joystick
     SmartDashboard.putBoolean("Encoder Pivot", true); // gets magnitude of left joystick
 
-    } else{
-      SmartDashboard.putBoolean("Encoder Pivot", false); // gets magnitude of left joystick
-      Coraltilt.set(0);
+   }} //else {
+    //   SmartDashboard.putBoolean("Encoder Pivot", false); // gets magnitude of left joystick
+      
+    //   if(encodertilt.getPosition() >= minPivot){
 
-    }
+    //     Double StopSpeed = -CoralPID.calculate(encodertilt.getPosition(), minPivot);
+    //     Coraltilt.set(StopSpeed);
 
-    CoralWheel.set(intakeSpeed);
+    //   }else{
+    //     Double StopSpeed = -CoralPID.calculate(encodertilt.getPosition(), maxPivot);
+    //     Coraltilt.set(StopSpeed);
+    //   }
 
+    // }
 
-  }
+  
 
-public void pivotUp(){
-  Coraltilt.set(.1);
+public void CoralIntake(double speed){
+  CoralWheel.set(speed);
+  SmartDashboard.putNumber("Intake Moving", speed);
 
 }
 
-public void pivotDown(){
-  Coraltilt.set(-.1);
-
-}
 
 public void pivotStop(){
   Coraltilt.set(0);
+  SmartDashboard.putNumber("Pivot Speed",0);
 
 }
 
