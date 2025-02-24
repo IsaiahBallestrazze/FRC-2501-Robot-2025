@@ -22,7 +22,7 @@ public class Climber extends SubsystemBase {
 
   public void ClimberMotorUp(){
     double climberangle = ClimberEncoder.getPosition();
-    if(maxClimb >= climberangle) ClimberMotor.set(1);
+    if(maxClimb >= climberangle) ClimberMotor.set(.7);
 
   SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
   SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
@@ -30,7 +30,7 @@ public class Climber extends SubsystemBase {
   public void ClimberMotorDown(){
     SmartDashboard.putBoolean("Climber Down", true); // gets magnitude of left joystick
     double climberangle = ClimberEncoder.getPosition();
-    if(minClimb <= climberangle) ClimberMotor.set(-1);
+    if(minClimb <= climberangle) ClimberMotor.set(-.7);
     SmartDashboard.putNumber("Climber Position", ClimberEncoder.getPosition()); // gets magnitude of left joystick
     SmartDashboard.putNumber("Climber Speed", ClimberEncoder.getVelocity());
   }

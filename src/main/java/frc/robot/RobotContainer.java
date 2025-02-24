@@ -44,12 +44,9 @@ public class RobotContainer {
   private final Elevator s_Elevator = new Elevator();
   private final Intake s_Intake = new Intake();
 
-
-
-  
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
-  //final CommandXboxController controlXbox = new CommandXboxController(1);
+  // final CommandXboxController controlXbox = new CommandXboxController(1);
   private final Joystick ButtonBox = new Joystick(1);
 
   // The robot's subsystems and commands are defined here...
@@ -69,8 +66,8 @@ public class RobotContainer {
       .allianceRelativeControl(true);
 
   /**
-
-  /**
+   * 
+   * /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
@@ -107,58 +104,98 @@ public class RobotContainer {
     driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
     driverXbox.rightBumper().onTrue(Commands.none());
 
-    //climber on D-pad
-    driverXbox.povUp().whileTrue(new RunCommand(() -> s_climber.climberUp()));
+    // climber on D-pad
+    driverXbox.povUp().whileTrue(new RunCommand(() -> s_climber.ClimberMotorUp()));
     driverXbox.povUp().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
 
-    driverXbox.povDown().whileTrue(new RunCommand(() -> s_climber.climberDown()));
+    driverXbox.povDown().whileTrue(new RunCommand(() -> s_climber.ClimberMotorDown()));
     driverXbox.povDown().whileFalse(new RunCommand(() -> s_climber.ClimberMotorStop()));
 
-    //Button Box
-    JoystickButton CoralUp = new JoystickButton(ButtonBox, 1);
-    JoystickButton CoralDown = new JoystickButton(ButtonBox, 2);
+    // // Button Box MK1
+    // JoystickButton CoralUp = new JoystickButton(ButtonBox, 1);
+    // JoystickButton CoralDown = new JoystickButton(ButtonBox, 2);
+    // JoystickButton CoralOut = new JoystickButton(ButtonBox, 3);
+    // // JoystickButton CoralIn = new JoystickButton(ButtonBox, 4);
+    // JoystickButton AlgaeLevelIn = new JoystickButton(ButtonBox, 4);
+
+    // JoystickButton AlgaeOut = new JoystickButton(ButtonBox, 5);
+    // JoystickButton AlgaeIn = new JoystickButton(ButtonBox, 6);
+
+    // JoystickButton Elevator0 = new JoystickButton(ButtonBox, 8);
+    // JoystickButton Elevator1 = new JoystickButton(ButtonBox, 7);
+    // JoystickButton Elevator2 = new JoystickButton(ButtonBox, 10);
+    // JoystickButton Elevator3 = new JoystickButton(ButtonBox, 9);
+
+    //Button Box MK2
+
+    //elevator
+    JoystickButton elevatorAlgae = new JoystickButton(ButtonBox, 2);
+    JoystickButton elevatorIntake = new JoystickButton(ButtonBox, 4);
+    JoystickButton elevatorlevel1 = new JoystickButton(ButtonBox, 6);
+    JoystickButton elevatorLevel2 = new JoystickButton(ButtonBox, 8);
+    JoystickButton elevatorHigh = new JoystickButton(ButtonBox, 10);
+
+    //algae
+    JoystickButton AlgaeOut = new JoystickButton(ButtonBox, 9);
+    JoystickButton AlgaeIn = new JoystickButton(ButtonBox, 7);
+
+    //Coral
     JoystickButton CoralOut = new JoystickButton(ButtonBox, 3);
-    JoystickButton CoralIn = new JoystickButton(ButtonBox, 4);
 
-    JoystickButton AlgaeOut = new JoystickButton(ButtonBox, 5);
-    JoystickButton AlgaeIn = new JoystickButton(ButtonBox, 6);
-
-    JoystickButton Elevator0 = new JoystickButton(ButtonBox, 8);
-    JoystickButton Elevator1 = new JoystickButton(ButtonBox, 7);
-    JoystickButton Elevator2 = new JoystickButton(ButtonBox, 10);
-    JoystickButton Elevator3 = new JoystickButton(ButtonBox, 9);
-
-
-    AlgaeIn.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.3))); // resets relavtive
+    AlgaeIn.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.7))); // resets relavtive
     AlgaeIn.whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
 
-    AlgaeOut.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(.3))); // resets relavtive
+    AlgaeOut.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(.7))); // resets relavtive
     AlgaeOut.whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
 
-    CoralIn.whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.5))); // resets relavtive
-    CoralIn.whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0))); // resets relavtive
-
-    CoralOut.whileTrue(new RunCommand(() -> s_Intake.CoralIntake(.5))); // resets relavtive
+    CoralOut.whileTrue(new RunCommand(() -> s_Intake.CoralIntake(.8))); // resets relavtive
     CoralOut.whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0))); // resets relavtive
 
+    //Elevator Things
+    elevatorAlgae.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(12)));
+    elevatorAlgae.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
 
-    CoralUp.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(-1000)));
-    //CoralUp.whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+    elevatorIntake.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(22.5)));
+    elevatorIntake.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(1500)));
+    elevatorIntake.whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.7)));
+    elevatorIntake.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    CoralDown.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(-3000)));
-    //CoralDown.whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+    elevatorlevel1.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(58)));
+    elevatorlevel1.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    elevatorlevel1.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    Elevator0.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(10)));
-    Elevator0.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+    elevatorLevel2.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(80)));
+    elevatorLevel2.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    elevatorLevel2.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    Elevator1.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(30)));
-    Elevator1.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
+    elevatorHigh.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(123)));
+    elevatorHigh.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(4000)));
+    elevatorHigh.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    Elevator2.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(60)));
-    Elevator2.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
 
-    Elevator3.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(100)));
-    Elevator3.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+    // CoralUp.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(1500)));
+    // CoralUp.whileTrue(new RunCommand(() -> s_Intake.CoralIntake(-.8)));
+
+    // CoralUp.whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+    // CoralUp.whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0)));
+
+    // CoralDown.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    // CoralDown.whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
+
+    // // CoralUp.whileTrue(new RunCommand(() -> s_Intake.CoralPivotTest(1000)));
+
+    // Elevator0.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(0)));
+    // Elevator0.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+
+    
+
+
+
+    // Elevator2.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(58)));
+    // Elevator2.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
+
+    // Elevator3.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(123)));
+    // Elevator3.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
   }
 
   /**
