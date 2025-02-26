@@ -20,7 +20,7 @@ public class Elevator extends SubsystemBase {
       double elevatorMin= 0;
       double elevatorMax= 110;
 
-      PIDController ElevatorPID = new PIDController(0.012, 0, 0);
+      PIDController ElevatorPID = new PIDController(0.01, 0, 0);
 
 
   /** Creates a new Elevator. */
@@ -64,6 +64,8 @@ public void ElevatorEncoderTest(){
 
 public void ElevationSet(double elevationHeight){
   Double ElevationSpeed = ElevatorPID.calculate(Math.abs(elevatorEncoder.getPosition()), elevationHeight);
+  if(ElevationSpeed > 1) ElevationSpeed = 1.0;
+  if(ElevationSpeed < -1) ElevationSpeed = -1.0;
 
   ElevatorMotor.set(-ElevationSpeed);
  SmartDashboard.putNumber("Elevator SPEEEED", ElevationSpeed); // gets magnitude of left joystick
