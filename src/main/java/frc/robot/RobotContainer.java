@@ -66,9 +66,17 @@ public class RobotContainer {
       .allianceRelativeControl(true);
 
   SwerveInputStream driveAngularVelocityHalfSpeed = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> (driverXbox.getLeftY() * -1) * 0.5,
+      () -> (driverXbox.getLeftX() * -1) * 0.5)
+      .withControllerRotationAxis(() -> driverXbox.getRightX() * 0.5)
+      .deadband(OperatorConstants.DEADBAND)
+      .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+
+      SwerveInputStream driveFieldOrientedQuarterSpeed = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> (driverXbox.getLeftY() * -1) * 0.3,
       () -> (driverXbox.getLeftX() * -1) * 0.3)
-      .withControllerRotationAxis(driverXbox::getRightX)
+      .withControllerRotationAxis(() -> driverXbox.getRightX() * 0.3)
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -80,9 +88,16 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the trigger bindings
+    //  final Intake s_Intake = new Intake();
+    NamedCommands.registerCommand("Coral Tilt", new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    NamedCommands.registerCommand("Coral Shoot", new RunCommand(() -> s_Intake.CoralIntake(.8)));
+    NamedCommands.registerCommand("Elevator Mid", new RunCommand(() -> s_Elevator.ElevationSet(30)));
+  // NamedCommands.registerCommand("Alage Go", new RunCommand(() -> s_Intake.CoralIntake(.8)));
+  // NamedCommands.registerCommand("Alage Go", new RunCommand(() -> s_Intake.AlgaeIntake(.7)));
+
+
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
 
   /**
@@ -99,19 +114,15 @@ public class RobotContainer {
    * Flight joysticks}.
    */
   private void configureBindings() {
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveFieldOrientedHalfSpeed = drivebase.driveFieldOriented(driveAngularVelocityHalfSpeed);
-
-    drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveAngularVelocity));
 
     driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    driverXbox.b().whileTrue(
-        drivebase.driveToPose(
-            new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+    driverXbox.b().whileTrue(Commands.none());
     driverXbox.start().whileTrue(Commands.none());
     driverXbox.back().whileTrue(Commands.none());
-    driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    driverXbox.rightBumper().whileTrue(driveFieldOrientedHalfSpeed);
+    driverXbox.button(7).whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    driverXbox.rightBumper().whileTrue(drivebase.driveFieldOriented(driveAngularVelocityHalfSpeed));
+    driverXbox.leftBumper().whileTrue(drivebase.driveFieldOriented(driveFieldOrientedQuarterSpeed));
 
     // climber on D-pad
     driverXbox.povUp().whileTrue(new RunCommand(() -> s_climber.ClimberMotorUp()));
@@ -138,7 +149,9 @@ public class RobotContainer {
     // Button Box MK2
 
     // elevator
+    JoystickButton elevatorAlgaeIn = new JoystickButton(ButtonBox, 1);
     JoystickButton elevatorAlgae = new JoystickButton(ButtonBox, 2);
+    JoystickButton PivotMidThing = new JoystickButton(ButtonBox, 5);
     JoystickButton elevatorIntake = new JoystickButton(ButtonBox, 4);
     JoystickButton elevatorlevel1 = new JoystickButton(ButtonBox, 6);
     JoystickButton elevatorLevel2 = new JoystickButton(ButtonBox, 8);
@@ -151,6 +164,11 @@ public class RobotContainer {
     // Coral
     JoystickButton CoralOut = new JoystickButton(ButtonBox, 3);
 
+    PivotMidThing.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3200)));
+
+
+
+
     AlgaeIn.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.7))); // resets relavtive
     AlgaeIn.whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0))); // resets relavtive
 
@@ -161,6 +179,10 @@ public class RobotContainer {
     CoralOut.whileFalse(new RunCommand(() -> s_Intake.CoralIntake(0))); // resets relavtive
 
     // Elevator Things
+    elevatorAlgaeIn.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(0)));
+    elevatorAlgaeIn.whileTrue(new RunCommand(() -> s_Intake.AlgaeIntake(-.7)));
+    elevatorAlgaeIn.whileFalse(new RunCommand(() -> s_Intake.AlgaeIntake(0)));
+
     elevatorAlgae.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(12)));
     elevatorAlgae.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorUp(0)));
 
@@ -172,15 +194,15 @@ public class RobotContainer {
     elevatorIntake.whileFalse(new RunCommand(() -> s_Intake.pivotStop()));
 
     elevatorlevel1.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(19)));
-    elevatorlevel1.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    elevatorlevel1.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(2000)));
     elevatorlevel1.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    elevatorLevel2.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(57)));
-    elevatorLevel2.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(3000)));
+    elevatorLevel2.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(65)));
+    elevatorLevel2.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(2000)));
     elevatorLevel2.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
-    elevatorHigh.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(122)));
-    elevatorHigh.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(5000)));
+    elevatorHigh.whileTrue(new RunCommand(() -> s_Elevator.ElevationSet(100)));
+    elevatorHigh.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(2000)));
     elevatorHigh.whileFalse(new RunCommand(() -> s_Elevator.ElevatorMotorDown(0)));
 
     // CoralUp.whileTrue(new RunCommand(() -> s_Intake.CoralTilt(1500)));

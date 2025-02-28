@@ -20,7 +20,7 @@ public class Elevator extends SubsystemBase {
       double elevatorMin= 0;
       double elevatorMax= 110;
 
-      PIDController ElevatorPID = new PIDController(0.01, 0, 0);
+      PIDController ElevatorPID = new PIDController(0.02, 0, 0);
 
 
   /** Creates a new Elevator. */
@@ -59,7 +59,13 @@ public void ElevatorEncoderTest(){
     SmartDashboard.putNumber("Elevator Speed", elevatorEncoder.getVelocity());
   }
 
-
+public void AutoElevator(double speed, double distance){
+  ElevatorMotor.set(speed);
+  double elevatorPosition = Math.abs(elevatorEncoder.getPosition());
+  if(elevatorPosition >= (distance - 3)){
+    return;
+  }
+}
 
 
 public void ElevationSet(double elevationHeight){

@@ -6,7 +6,12 @@
           "open": true
         }
       },
-      "SPARK MAX [5] RELATIVE ENCODER": {
+      "SPARK MAX [1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [2]": {
         "header": {
           "open": true
         }
@@ -57,6 +62,7 @@
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
+      "/SmartDashboard/Pigeon 2 (v6) [35]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Swerve Drive": "Alerts",

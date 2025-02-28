@@ -7,7 +7,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "Coral Path Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Coral Tilt"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Mid"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Coral Shoot"
+                }
+              }
+            ]
           }
         }
       ]
